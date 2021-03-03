@@ -3,12 +3,20 @@
 
 #Importing dependencies.
 from evdev import InputDevice, categorize, ecodes
-import time
+from time import sleep
+import jobot as jb
+import RPi.GPIO as GPIO
 
 #Setting the crucial gamepad and printing it out.
 gamepad = InputDevice('/dev/input/event0')
 print(gamepad)
-
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+redLED = 20
+startButton = 16
+pull_up_down = GPIO.PUD_UP
+GPIO.setup(redLED, GPIO.OUT)
+GPIO.setup(startButton, GPIO.IN, pull_up_down)
 #The numbers are the code value for that given button.
 #Mapping the numbers to rememberable buttons will help for later on.
 
@@ -46,13 +54,16 @@ Rs_X = 3
 Rs_Y = 4
 
 #The mainloop responsible for handling events when a given button is pressed
+#jb.standby(redLED, startButton)
 for event in gamepad.read_loop():
     value = event.value
     code = event.code
     if (code == aBtn):
         if (value == 1):
+            GPIO.output(redLED, GPIO.HIGH)
             print("The A button is pressed")
         if (value == 0):
+            GPIO.output(redLED, GPIO.LOW)
             print("The A button was released")
     if (code == bBtn):
         if (value == 1):
@@ -91,10 +102,13 @@ for event in gamepad.read_loop():
             print("The window button was released")
     if (code == HorizontalDp):
         if (value == 1):
+            jb.turn('right', 45)
             print("Right on D-pad is pressed.")
         if (value == -1):
+            jb.turn('left', 45)
             print("Left on D-pad is pressed.")
         if (value == 0):
+            jb.straighten()
             print("The horizontal D-pad was released.")
     if (code == VerticalDp):
         if (value == 1):
@@ -106,21 +120,29 @@ for event in gamepad.read_loop():
     #The section for the triggers, the max input value is 1023 the deadzone i would reccomend is 100 which is an equivalent to 10%.
     if (code == RightT):
         if (value >= 250):
+            jb.forward(25)
             print("Right Trigger is 25% depressed.")
-        if (value >= 500):
-            print("Right Trigger is 50% depressed.")
+        if (value >= 750):
+            jb.forward(75)
+            print("Right Trigger is 75% depressed.")
         if (value == 1023):
+            jb.forward(100)
             print("Right Trigger is fully depressed.")
         else:
+            jb.stop()
             print("Right Trigger is no longer depressed.")
     if (code == LeftT):
         if (value >= 250):
+            jb.backward(25)
             print("Left Trigger is 25% depressed.")
-        if (value >= 500):
-            print("Left Trigger is 50% depressed.")
+        if (value >= 750):
+            jb.backward(75)
+            print("Left Trigger is 75% depressed.")
         if (value == 1023):
+            jb.backward(100)
             print("Left Trigger is fully depressed.")
         else:
+            jb.stop()
             print("Left Trigger is no longer depressed.")
     if (code == LeftStickClick):
         if (value == 1):

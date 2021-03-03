@@ -1,4 +1,4 @@
-from SunFounder_PiCar.picar import front_wheels, back_wheels
+from SunFounder_PiCar.picar import front_wheels, back_wheels 
 from SunFounder_PiCar.picar.SunFounder_PCA9685 import Servo
 from time import sleep
 from threading import Thread
@@ -8,11 +8,10 @@ from SunFounder_PiCar import picar
 fw = front_wheels.Front_Wheels(db='config')
 bw = back_wheels.Back_Wheels(db='config')
 fw.turning_max = 45
-forward_speed = 70
-backward_speed = 70
 
 def standby(LED_pin, button_pin):
     '''Run this command when everything is completely setup and you just want the robot to idle.'''
+    picar.setup()
     GPIO.output(LED_pin, GPIO.HIGH)
     button_state = GPIO.input(button_pin)
     timer_thread = Thread(target = start_timer)
@@ -26,12 +25,12 @@ def standby(LED_pin, button_pin):
         else:
             sleep(0.01)
 
-def forward():
+def forward(forward_speed = 75):
     print("DEBUG: FORWARD")
     bw.forward()
     bw.speed = forward_speed
 
-def backward():
+def backward(backward_speed = 75):
     print("DEBUG: BACKWARD")
     bw.backward()
     bw.speed = backward_speed

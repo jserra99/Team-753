@@ -44,15 +44,22 @@ def stop_all():
     bw.stop()
     fw.turn_straight()
 
-def turn(direction, degree):
-    '''This function is assuming that the servo works like a unit circle...'''
+'''def turn(direction, degree):
+    This function is assuming that the servo works like a unit circle...
     if (direction == 'left'):
-        print("DEBUG: TURNING LEFT BY " + degree + "DEGREES")
         degree = degree - (degree * 2)
+        print("DEBUG: TURNING LEFT BY " + str(degree) + " DEGREES")
         fw.turn(degree)
     elif (direction == 'right'):
-        print("DEBUG: TURNING RIGHT BY " + degree + "DEGREES")
         fw.turn(degree)
+        print("DEBUG: TURNING RIGHT BY " + str(degree) + " DEGREES")'''
+
+def turn(direction):
+    '''This function is assuming that the servo works like a unit circle...'''
+    if (direction == 'left'):
+        fw.turn_left()
+    elif (direction == 'right'):
+        fw.turn_right()
 
 def straighten():
     print("DEBUG: STRAIGHTENING WHEELS")
@@ -68,4 +75,8 @@ def start_timer():
 
 def obstacle_detection():
     while (True):
+        pass
         #might not be needed...
+
+def install_servos():
+    Servo.install()

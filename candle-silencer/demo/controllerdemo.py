@@ -16,7 +16,7 @@ redLED = 20
 startButton = 16
 pull_up_down = GPIO.PUD_UP
 GPIO.setup(redLED, GPIO.OUT)
-GPIO.setup(startButton, GPIO.IN, pull_up_down)
+GPIO.setup(startButton, GPIO.IN)
 #The numbers are the code value for that given button.
 #Mapping the numbers to rememberable buttons will help for later on.
 
@@ -54,6 +54,7 @@ Rs_X = 3
 Rs_Y = 4
 
 #The mainloop responsible for handling events when a given button is pressed
+jb.stop_all()
 #jb.standby(redLED, startButton)
 for event in gamepad.read_loop():
     value = event.value
@@ -102,10 +103,10 @@ for event in gamepad.read_loop():
             print("The window button was released")
     if (code == HorizontalDp):
         if (value == 1):
-            jb.turn('right', 45)
+            jb.turn('right')
             print("Right on D-pad is pressed.")
         if (value == -1):
-            jb.turn('left', 45)
+            jb.turn('left')
             print("Left on D-pad is pressed.")
         if (value == 0):
             jb.straighten()
@@ -154,11 +155,16 @@ for event in gamepad.read_loop():
             print("Right Stick was clicked inward.")
         if (value == 0):
             print("Right Stick click was released.")
-    if (code == Ls_X):
+    if (code == Ls_X and value != 0):
         if (value <= -10000):
+            jb.turn('left')
             print("Left Stick left.")
-        if (value >= 10000):
+        elif (value >= 10000):
+            jb.turn('right')
             print("Left Stick right.")
+        else:
+            jb.straighten()
+
     if (code == Ls_Y):
         if (value <= -10000):
             print("Left Stick up.")

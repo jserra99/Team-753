@@ -55,6 +55,8 @@ Rs_Y = 4
 
 #The mainloop responsible for handling events when a given button is pressed
 jb.stop_all()
+jb.pan(270)
+jb.tilt(90)
 #jb.standby(redLED, startButton)
 for event in gamepad.read_loop():
     value = event.value
@@ -103,13 +105,13 @@ for event in gamepad.read_loop():
             print("The window button was released")
     if (code == HorizontalDp):
         if (value == 1):
-            jb.turn('right')
+            jb.pan(-90)
             print("Right on D-pad is pressed.")
         if (value == -1):
-            jb.turn('left')
+            jb.pan(90)
             print("Left on D-pad is pressed.")
         if (value == 0):
-            jb.straighten()
+            jb.pan(0)
             print("The horizontal D-pad was released.")
     if (code == VerticalDp):
         if (value == 1):

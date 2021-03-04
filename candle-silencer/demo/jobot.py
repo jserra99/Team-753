@@ -7,6 +7,8 @@ from SunFounder_PiCar import picar
 
 fw = front_wheels.Front_Wheels(db='config')
 bw = back_wheels.Back_Wheels(db='config')
+pan_servo = Servo.Servo(1)
+tilt_servo = Servo.Servo(2)
 fw.turning_max = 45
 
 def standby(LED_pin, button_pin):
@@ -77,6 +79,13 @@ def obstacle_detection():
     while (True):
         pass
         #might not be needed...
+
+def pan(pan_angle):
+    pan_angle = 270 + pan_angle
+    pan_servo.write(pan_angle)
+
+def tilt(tilt_angle):
+    tilt_servo.write(tilt_angle)
 
 def install_servos():
     Servo.install()

@@ -5,6 +5,7 @@
 from evdev import InputDevice, categorize, ecodes
 from time import sleep
 import jobot as jb
+import silencer
 import RPi.GPIO as GPIO
 
 def mainloop():
@@ -22,7 +23,7 @@ def mainloop():
     GPIO.setmode(GPIO.BCM)
     redLED = 20
     startButton = 5
-    waterPump = 16
+    waterPump = 12
     pull_up_down = GPIO.PUD_UP
     GPIO.setup(redLED, GPIO.OUT)
     GPIO.setup(startButton, GPIO.IN)
@@ -67,6 +68,7 @@ def mainloop():
 
 #The mainloop responsible for handling events when a given button is pressed
 #jb.standby(redLED, startButton)
+    silencer.timer_thread.start()
     for event in gamepad.read_loop():
         value = event.value
         code = event.code
@@ -107,11 +109,14 @@ def mainloop():
         elif (code == MenuBtn):
             if (value == 1):
                 print("The menu button is pressed")
+                silencer.action_list = []
+                silencer.timed_list = []
             elif (value == 0):
                 print("The menu button was released")
         elif (code == WindowBtn):
             if (value == 1):
                 print("The window button is pressed")
+                jb.retrace(silencer.action_list, silencer.timed_list)
             elif (value == 0):
                 print("The window button was released")
         elif (code == HorizontalDp):

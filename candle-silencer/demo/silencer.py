@@ -1,7 +1,6 @@
 #importing necessary modules...
 import RPi.GPIO as GPIO
 from time import sleep
-import jobot as jb
 from threading import Thread
 
 #Set up area
@@ -22,13 +21,11 @@ GPIO.setup(midThermalSensor, GPIO.IN, pull_up_down)
 GPIO.setup(waterPump, GPIO.OUT)
 
 #Run this after everything is set up
-jb.ready()
 candle_found = False
 just_reset = False
 previous_pan = 0
 max_distance_threshold = 200
 min_distance_threshold = 100
-timer_thread = Thread(target = start_timer)
 timed_list = []
 action_list = []
 
@@ -40,6 +37,7 @@ def start_timer():
             rt_clock = rt_clock + .01
             clock = round(rt_clock, 2)
             sleep(.01)
+timer_thread = Thread(target = start_timer)
 
 def rotate_check():
     IR_Distance_Data = []
@@ -58,14 +56,28 @@ def rotate_check():
     return IR_Distance_Data, IR_Thermal_Data, Frontal_Distance
 
 def record(action):
+    new_time = 0
     action_list.append(action)
-    timed_list.append(int(clock))
-    rt_clock = 0
+    if (not timed_list):
+        timed_list.append(clock)
+        print("Adding when i prolly shouldnt")
+    else:
+        for time in timed_list:
+            new_time -= time
+        new_time += clock
+        print("New Time: ", new_time)
+        print("Clock: ", clock)
+        timed_list.append(new_time)
+        
+    #if (action == 'forward' or action == 'backward'):
 
+import jobot as jb
 #Where the main logic loop is
 def __main__():
     timer_thread.start()
+    jb.ready()
     while (candle_found == False):
+        jb.stop_all()
         obstructions = False
         distances, thermal, front_distance = rotate_check()
         rt_clock = 0

@@ -57,7 +57,7 @@ def check_sensors():
                 sensor_thread._stop()
                 thermal_thread._stop()
                 quit
-            elif (i == 1500):
+            elif (i == 1000):
                 pause = True
                 jb.stop_all()
                 i = 0

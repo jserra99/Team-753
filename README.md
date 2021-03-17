@@ -1,2 +1,2 @@
 # Team-753
-A Repository for all of the MVHS Robotics Team 753 Code (Starting from 2021).
+A Repository for some of my contributions to Team 753 (Starting from 2021).

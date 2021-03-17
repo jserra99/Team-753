@@ -1,0 +1,9 @@
+{
+  "__comment__": "Do not assume any of these values are correct.",
+  "__comment2__": "These values are passed into the main file.",
+  "climbMotor": 16,
+  "feedMotor": 9,
+  "intakeMotor": 11,
+  "turretRotater": 15,
+  "turretFlywheel": 14
+}

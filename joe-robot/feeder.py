@@ -1,1 +1,0 @@
-''' The file which controls the feeder for Joe. '''

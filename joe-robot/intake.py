@@ -1,1 +1,0 @@
-''' The file which controls the intake functionality of Joe. '''

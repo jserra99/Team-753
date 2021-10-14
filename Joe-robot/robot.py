@@ -101,14 +101,25 @@ class MyRobot(wpilib.TimedRobot):
 		intakeOut = self.auxiliary.getXButton()
 		climbUp = self.auxiliary.getYButton()
 		climbDown = self.auxiliary.getAButton()
+		feederIn = self.auxiliary.getBButton()
 		turretClockwise = self.auxiliary.getStickButton(wpilib.interfaces.GenericHID.Hand.kRightHand)
 		turretCounterclockwise = self.auxiliary.getStickButton(wpilib.interfaces.GenericHID.Hand.kLeftHand)
 		autoAim = self.auxiliary.getBumper(wpilib.interfaces.GenericHID.Hand.kRightHand)
 		manualFlywheel = self.auxiliary.getBumper(wpilib.interfaces.GenericHID.Hand.kLeftHand)
-		feederIn = self.auxiliary.getBButton()
+		checkEncoders = self.auxiliary.getStartButton() # if not working add in the right hand statement above
 		
 		manualFlywheelSpeed = wpilib.SmartDashboard.getNumber("Shooter RPM",4000)
 		
+		if checkEncoders:
+			'''driveTrainEncoders = self.drive.getEncoderVals()
+			wpilib.SmartDashboard.putNumber("fLPosition", driveTrainEncoders[0])
+			wpilib.SmartDashboard.putNumber("fRPosition", driveTrainEncoders[1])
+			wpilib.SmartDashboard.putNumber("rLPosition", driveTrainEncoders[2])
+			wpilib.SmartDashboard.putNumber("rRPosition", driveTrainEncoders[3])
+			# fLPosition, fRPosition, rLPosition, rRPosition'''
+			self.drive.checkEncoders() # this should work better
+
+
 		#intake control
 		if intakeIn:
 			self.intake.collect(self.intakeSpeed,self.halfMoonSpeed) #intake speed, half moon speed
@@ -148,7 +159,7 @@ class MyRobot(wpilib.TimedRobot):
 			
 			#manual flywheel
 			if manualFlywheel:
-				self.turret.flywheelRPM(manualFlywheelSpeed)
+				self.turret.flywheelRPM(4000) # going to ovveride this annoyance for now if not replace with manualFlywheelSpeed
 				if feederIn:
 					self.feeder.feed(self.feederSpeed)
 				else:

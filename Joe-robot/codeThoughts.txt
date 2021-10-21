@@ -1,0 +1,8 @@
+The zeroing of the motors seems to be bound to the absolute encoders
+however as far as i can tell, it does not actually use those values whatsoever when turning
+If current solution does not work try this:
+have the zeros be retrieved using the 
+"zeroEncoder()" function's method of 
+sparkPosition = 360 - neoPosition + self.encoderOffset
+with neoPosition simply being the encoderBoundedPosition
+just take this and take away the offset

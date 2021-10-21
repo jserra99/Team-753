@@ -27,3 +27,4 @@ class Feeder:
 		
 	def brake(self):
 		self.feederMotor.setIdleMode(rev.IdleMode.kBrake)
+		

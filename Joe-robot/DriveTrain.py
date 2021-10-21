@@ -3,6 +3,7 @@ import math
 import rev
 from wpilib import controller as controller
 from SwerveModule import SwerveModule
+import json
 
 class DriveTrain:
 	robotLength = 25.25
@@ -10,10 +11,12 @@ class DriveTrain:
 	diagonal = math.hypot(robotLength,robotWidth)
 	
 	def __init__(self):
-		self.frontLeft = SwerveModule(7,8,0,267.5,"Front Left") #drive ID, turn ID, encoder ID, encoder offset
-		self.frontRight = SwerveModule(1,2,2,357.6,"Front Right")
-		self.rearLeft = SwerveModule(5,6,3,160.3,"Rear Left")
-		self.rearRight = SwerveModule(3,4,1,197.7, "Rear Right")
+		with open("offsets.json") as f1: # Loading in the encoder offsets file and passing the values in as parameters into the encoder offsets
+			offsets = json.load(f1)
+		self.frontLeft = SwerveModule(7,8,0,offsets["Front Left"],"Front Left") #drive ID, turn ID, encoder ID, encoder offset
+		self.frontRight = SwerveModule(1,2,2,offsets["Front Right"],"Front Right")
+		self.rearLeft = SwerveModule(5,6,3,offsets["Rear Left"],"Rear Left")
+		self.rearRight = SwerveModule(3,4,1,offsets["Rear Right"], "Rear Right")
 		
 	def move(self,x,y,z):
 		'''wpilib.SmartDashboard.putNumber("x",x)
@@ -104,6 +107,9 @@ class DriveTrain:
 		self.frontRight.checkEncoders()
 		self.rearLeft.checkEncoders()
 		self.rearRight.checkEncoders()
+
+	def getEncoderVals(self):
+		return self.frontLeft.encoderBoundedPosition(), self.frontRight.encoderBoundedPosition(), self.rearLeft.encoderBoundedPosition(), self.rearRight.encoderBoundedPosition()
 		
 	def averageWheelPosition(self):
 		frontLeftX, frontLeftY = self.frontLeft.autoPosition()
@@ -118,11 +124,4 @@ class DriveTrain:
 	def frontLeftPosition(self):
 		position = self.frontLeft.basicPosition()
 		return(position)
-	
-	def getEncoderVals(self):
-		fLPosition = self.frontLeft.returnAbsolutes()
-		fRPosition = self.frontRight.returnAbsolutes()
-		rLPosition = self.rearLeft.returnAbsolutes()
-		rRPosition = self.rearRight.returnAbsolutes()
-		return([fLPosition, fRPosition, rLPosition, rRPosition]) # if this is not working implement something different from above
 		

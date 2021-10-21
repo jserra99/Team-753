@@ -11,6 +11,7 @@ from Turret import Turret
 from navx import AHRS
 from networktables import NetworkTables
 import threading
+import json
 
 cond = threading.Condition()
 notified = False
@@ -42,7 +43,7 @@ class MyRobot(wpilib.TimedRobot):
 		self.intake = Intake(11,10) #intake ID, half moon ID
 		self.turret = Turret(15,14) #rotate ID, flywheel ID
 		
-		self.drive.zeroEncoders()
+		self.zeroEncoders() # TODO maybe uncomment this
 		self.climb.coast()
 		self.intake.coast()
 		
@@ -101,25 +102,14 @@ class MyRobot(wpilib.TimedRobot):
 		intakeOut = self.auxiliary.getXButton()
 		climbUp = self.auxiliary.getYButton()
 		climbDown = self.auxiliary.getAButton()
-		feederIn = self.auxiliary.getBButton()
 		turretClockwise = self.auxiliary.getStickButton(wpilib.interfaces.GenericHID.Hand.kRightHand)
 		turretCounterclockwise = self.auxiliary.getStickButton(wpilib.interfaces.GenericHID.Hand.kLeftHand)
 		autoAim = self.auxiliary.getBumper(wpilib.interfaces.GenericHID.Hand.kRightHand)
 		manualFlywheel = self.auxiliary.getBumper(wpilib.interfaces.GenericHID.Hand.kLeftHand)
-		checkEncoders = self.auxiliary.getStartButton() # if not working add in the right hand statement above
+		feederIn = self.auxiliary.getBButton()
 		
 		manualFlywheelSpeed = wpilib.SmartDashboard.getNumber("Shooter RPM",4000)
 		
-		if checkEncoders:
-			'''driveTrainEncoders = self.drive.getEncoderVals()
-			wpilib.SmartDashboard.putNumber("fLPosition", driveTrainEncoders[0])
-			wpilib.SmartDashboard.putNumber("fRPosition", driveTrainEncoders[1])
-			wpilib.SmartDashboard.putNumber("rLPosition", driveTrainEncoders[2])
-			wpilib.SmartDashboard.putNumber("rRPosition", driveTrainEncoders[3])
-			# fLPosition, fRPosition, rLPosition, rRPosition'''
-			self.drive.checkEncoders() # this should work better
-
-
 		#intake control
 		if intakeIn:
 			self.intake.collect(self.intakeSpeed,self.halfMoonSpeed) #intake speed, half moon speed
@@ -159,7 +149,7 @@ class MyRobot(wpilib.TimedRobot):
 			
 			#manual flywheel
 			if manualFlywheel:
-				self.turret.flywheelRPM(4000) # going to ovveride this annoyance for now if not replace with manualFlywheelSpeed
+				self.turret.flywheelRPM(manualFlywheelSpeed)
 				if feederIn:
 					self.feeder.feed(self.feederSpeed)
 				else:
@@ -240,9 +230,16 @@ class MyRobot(wpilib.TimedRobot):
 		if self.joystick.getRawButton(12):
 			self.driveAngleController.setSetpoint(-90)
 			z = self.driveAngleController.calculate(angleDegrees)
+		if self.joystick.getRawButton(6):
+			self.zeroEncoders()
+		if self.joystick.getRawButton(5):
+			self.checkZeros()
+
 		
 		if max(abs(x),abs(y),abs(z)) != 0:
 			self.drive.move(x,y,z)
+		elif self.joystick.getRawButton(7):
+			self.drive.coast()
 		else:
 			self.drive.stationary()
 		
@@ -266,6 +263,29 @@ class MyRobot(wpilib.TimedRobot):
 		self.drive.coast()
 		self.turret.coast()
 		self.feeder.coast()
+
+	def zeroEncoders(self):
+		''' First step is to retrieve current NEO values and then write them to the offsets.json file and then initiate the drivetrain class again'''
+		# function = encoderBoundedPosition
+		vals = DriveTrain.getEncoderVals() # may have to change this function
+		offsets = {
+			"Front Left": vals[0],
+			"Front Right": vals[1],
+			"Rear Left": vals[2],
+			"Rear Right": vals[3]
+		}
+		json_object = json.dumps(offsets, indent = 2)
+		with open("offsets.json", "w") as outfile:
+			outfile.write(json_object)
+		self.drive = DriveTrain() # Re-initiating with new zeros
+		self.drive.zeroEncoders()
+
+	def checkZeros(self):
+		'''Not sure if i will take this anywhere
+		if i do it needs to be able to turn to what it thinks is zero
+		and then stay there with a sleep function for 5 seconds.'''
+		pass
+		
 
 if __name__ == "__main__":
 	wpilib.run(MyRobot)

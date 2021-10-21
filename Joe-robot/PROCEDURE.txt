@@ -1,0 +1,12 @@
+Function/Variable Details:
+encoderBoundedPosition(): returns the encoder value of the NEO and returns it as either -180 or 180
+
+Details the procedure for zeroing the motors...
+STEP 1:
+Hold button number 7 down on the joystick.
+STEP 2:
+Make all of the wheels parallel to each other and assume its zeros
+STEP 3:
+While still holding button 7, press button 6.
+STEP 4:
+Release button 7, if procedure done correctly the wheels shouldn't move when it is released.

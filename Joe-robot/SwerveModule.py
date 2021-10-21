@@ -92,12 +92,14 @@ class SwerveModule:
 		wpilib.SmartDashboard.putNumber(self.moduleName + " Velocity",badVelocity)'''
 		
 	def returnAbsolutes(self):
-		position = self.absoluteEncoder.getValue()*self.absoluteEncoderConversion
+		# position = self.absoluteEncoder.getValue()*self.absoluteEncoderConversion
+		position = self.encoderBoundedPosition()
 		return(position)
 		
-	def zeroEncoder(self,absolutePosition):
-		sparkPosition = 360 - absolutePosition + self.encoderOffset
-		
+	def zeroEncoder(self,neoPosition):
+		sparkPosition = 360 - neoPosition + self.encoderOffset
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Offset", self.encoderOffset)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Encoder Offset Val", sparkPosition)
 		self.driveEncoder.setPosition(0)
 		self.turnEncoder.setPosition(sparkPosition)
 		self.turnController.setSetpoint(0)
@@ -116,8 +118,11 @@ class SwerveModule:
 	def checkEncoders(self):
 		absolutePosition = self.absoluteEncoder.getValue()*self.absoluteEncoderConversion
 		position = self.encoderBoundedPosition()
-		wpilib.SmartDashboard.putNumber(self.moduleName,absolutePosition)
-		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO",position)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " Absolute", absolutePosition)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Pre-360-Offset", position)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Post-360", 360 - position)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Post 360-Offset", 360 - self.encoderBoundedPosition() + self.encoderOffset) # if this value goes over 360 we may have to instead take away the encoder value
+		wpilib.SmartDashboard.putNumber(self.moduleName + " Offset", self.encoderOffset)
 		
 	def autoPosition(self):
 		currentPosition = self.driveEncoder.getPosition()

@@ -1,0 +1,14 @@
+For SwerveModule.py:
+def currentNonOffsetPosition(self):
+        position = self.turnEncoder.getPosition()%360 #this limits the encoder input
+		if position < 0: #to be on a single circle
+			position += 360
+		if position < 90: #this translates those values to correspond with what the
+			position += 90 #atan2 function returns (-180, 180)
+		else:
+			position -= 270
+        adjustedPosition = 360 - position
+
+For DriveTrain.py:
+def getEncoderVals(self):
+		return self.frontLeft.currentNonOffsetPosition(), self.frontRight.currentNonOffsetPosition(), self.rearLeft.currentNonOffsetPosition(), self.rearRight.currentNonOffsetPosition()

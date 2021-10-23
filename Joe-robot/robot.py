@@ -11,8 +11,8 @@ from Turret import Turret
 from navx import AHRS
 from networktables import NetworkTables
 import threading
-import json
-import offsetFile
+# import json
+# import offsetFile
 
 cond = threading.Condition()
 notified = False
@@ -38,7 +38,14 @@ class MyRobot(wpilib.TimedRobot):
 		self.joystick = wpilib.Joystick(0)
 		self.auxiliary = wpilib.XboxController(1)
 		
-		self.drive = DriveTrain(offsetFile.offsets)
+		self.offsets = {
+			"Front Left": 0,
+			"Front Right": 0,
+			"Rear Left": 0,
+			"Rear Right": 0
+		}
+
+		self.drive = DriveTrain(self.offsets)
 		self.climb = Climb(16) #climb ID
 		self.feeder = Feeder(9) #feeder ID
 		self.intake = Intake(11,10) #intake ID, half moon ID
@@ -266,19 +273,20 @@ class MyRobot(wpilib.TimedRobot):
 	def zeroEncoders(self):
 		''' First step is to retrieve current NEO values and then write them to the offsets.json file and then initiate the drivetrain class again'''
 		# function = encoderBoundedPosition
-		vals = DriveTrain.getEncoderVals() # may have to change this function
-		offsets = {
+		vals = self.drive.getEncoderVals() # may have to change this function
+		self.offsets = {
 			"Front Left": vals[0],
 			"Front Right": vals[1],
 			"Rear Left": vals[2],
 			"Rear Right": vals[3]
 		}
-		initialObject = json.dumps(offsets, indent = 4)
+		print("DEBUG: " + self.offsets)
+		'''initialObject = json.dumps(offsets, indent = 4)
 		secondaryObject = "offsets = " + initialObject
 		with open("offsetFile.py", "w") as outfile:
 			outfile.write(secondaryObject)
-		import offsetFile
-		self.drive = DriveTrain(offsetFile.offsets) # Re-initiating with new zeros
+		import offsetFile'''
+		self.drive = DriveTrain(self.offsets) # Re-initiating with new zeros
 		self.drive.zeroEncoders()
 
 	def checkZeros(self):

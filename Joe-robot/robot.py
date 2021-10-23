@@ -12,6 +12,7 @@ from navx import AHRS
 from networktables import NetworkTables
 import threading
 import json
+import offsetFile
 
 cond = threading.Condition()
 notified = False
@@ -37,7 +38,7 @@ class MyRobot(wpilib.TimedRobot):
 		self.joystick = wpilib.Joystick(0)
 		self.auxiliary = wpilib.XboxController(1)
 		
-		self.drive = DriveTrain()
+		self.drive = DriveTrain(offsetFile.offsets)
 		self.climb = Climb(16) #climb ID
 		self.feeder = Feeder(9) #feeder ID
 		self.intake = Intake(11,10) #intake ID, half moon ID
@@ -232,8 +233,6 @@ class MyRobot(wpilib.TimedRobot):
 			z = self.driveAngleController.calculate(angleDegrees)
 		if self.joystick.getRawButton(6):
 			self.zeroEncoders()
-		if self.joystick.getRawButton(5):
-			self.checkZeros()
 
 		
 		if max(abs(x),abs(y),abs(z)) != 0:
@@ -274,10 +273,12 @@ class MyRobot(wpilib.TimedRobot):
 			"Rear Left": vals[2],
 			"Rear Right": vals[3]
 		}
-		json_object = json.dumps(offsets, indent = 2)
-		with open("offsets.json", "w") as outfile:
-			outfile.write(json_object)
-		self.drive = DriveTrain() # Re-initiating with new zeros
+		initialObject = json.dumps(offsets, indent = 4)
+		secondaryObject = "offsets = " + initialObject
+		with open("offsetFile.py", "w") as outfile:
+			outfile.write(secondaryObject)
+		import offsetFile
+		self.drive = DriveTrain(offsetFile.offsets) # Re-initiating with new zeros
 		self.drive.zeroEncoders()
 
 	def checkZeros(self):

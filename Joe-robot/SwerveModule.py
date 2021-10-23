@@ -121,6 +121,7 @@ class SwerveModule:
 		wpilib.SmartDashboard.putNumber(self.moduleName + " Absolute", absolutePosition)
 		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Pre-360-Offset", position)
 		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Post-360", 360 - position)
+		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Post-Offset", position + self.encoderOffset)
 		wpilib.SmartDashboard.putNumber(self.moduleName + " NEO Post 360-Offset", 360 - self.encoderBoundedPosition() + self.encoderOffset) # if this value goes over 360 we may have to instead take away the encoder value
 		wpilib.SmartDashboard.putNumber(self.moduleName + " Offset", self.encoderOffset)
 		

@@ -3,16 +3,13 @@ import math
 import rev
 from wpilib import controller as controller
 from SwerveModule import SwerveModule
-import json
 
 class DriveTrain:
 	robotLength = 25.25
 	robotWidth = 21
 	diagonal = math.hypot(robotLength,robotWidth)
 	
-	def __init__(self):
-		with open("offsets.json") as f1: # Loading in the encoder offsets file and passing the values in as parameters into the encoder offsets
-			offsets = json.load(f1)
+	def __init__(self, offsets):
 		self.frontLeft = SwerveModule(7,8,0,offsets["Front Left"],"Front Left") #drive ID, turn ID, encoder ID, encoder offset
 		self.frontRight = SwerveModule(1,2,2,offsets["Front Right"],"Front Right")
 		self.rearLeft = SwerveModule(5,6,3,offsets["Rear Left"],"Rear Left")
